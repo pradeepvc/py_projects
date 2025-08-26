@@ -1,0 +1,1 @@
+echo url="https://www.duckdns.org/update?domains=pradeepvc&token=442b3d76-933f-42d0-9fe4-d18c10a2b320&ip=" | curl -k -o ~/duckdns/duck.log -K -
