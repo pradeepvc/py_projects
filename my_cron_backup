@@ -1,0 +1,13 @@
+# * * * * * <command to execute>
+# | | | | |
+# | | | | day of the week (0–6) (Sunday to Saturday; 
+# | | | month (1–12)             7 is also Sunday on some systems)
+# | | day of the month (1–31)
+# | hour (0–23)
+# minute (0–59)
+
+0 * * * * python /home/vcbotpi5/py_projects/telegrambot.py
+*/1 * * * * cd /home/vcbotpi5/py_projects && git pull && crontab /home/vcbotpi5/py_projects/my_cron_backup
+
+#keep one extra line
+#run crontab /home/vcbotpi5/py_projects/my_cron_backup command only if u want changes from my_cron_backup file to save in actual crontab file
