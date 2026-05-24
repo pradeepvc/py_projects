@@ -29,8 +29,8 @@ if __name__ == "__main__":
         gold_price = ET.fromstring(requests.get("https://api.thingspeak.com/apps/thinghttp/send_request?api_key=N2KLBUQU2DPBNSUT").text).text
         pitemp = sprun(["vcgencmd","measure_temp"], capture_output=True, text=True)
         ipv6add = sprun(['bash', '-c', "ip -6 addr show wlan0 scope global | grep -oP 'inet6 \\K[^/]*'"], capture_output=True, text=True)
-        message = f"{pitemp.stdout}pi5 address={ipv6add.stdout}Goldpricetoday={gold_price}\u20B9\nBangaloretemp={Blore_temp}"
-        #print(message)
+        message = f"{pitemp.stdout}pi5 address= http://[{ipv6add.stdout[:-1]}]\nGoldpricetoday={gold_price}\u20B9\nBangaloretemp={Blore_temp}"
+        print(message)
         send_telegram_message(token, chat_id, message)
 
     except Exception as e:
