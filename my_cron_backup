@@ -10,4 +10,4 @@
 */1 * * * * cd /home/vcbotpi5/py_projects && git pull && crontab /home/vcbotpi5/py_projects/my_cron_backup
 
 #keep one extra line
-#run crontab /home/vcbotpi5/py_projects/my_cron_backup command only if u want changes from my_cron_backup file to save in actual crontab file
+#run crontab /home/vcbotpi5/py_projects/my_cron_backup command only if u want changes from my_cron_backup file to save in actual crontab file delete this
