@@ -59,8 +59,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         response = handle_response(text)
     
-    # print(f"Bot: {response}") #Uncomment for debugging
-    await update.message.reply_text(response)
+    #print(f"Bot: {response}") #Uncomment for debugging
+    await update.message.reply_text(f"```\n{response}\n```", parse_mode='MarkdownV2')
 
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f"Update {update} caused an error: {context.error}")

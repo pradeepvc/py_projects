@@ -25,7 +25,7 @@ def get_adjustment_factor(subject: str):
 
 
 def historical_for_date(trade_date: str):
-    """Return a dataframe of Nifty50 symbols with perChange for the given date.
+    """Return a dataframe of Nifty50 symbols with %chang for the given date.
 
     Expects `trade_date` in 'dd-mm-YYYY' format (same as `bhav_copy_equities`).
     """
@@ -87,12 +87,13 @@ def historical_for_date(trade_date: str):
             adjustments[row['symbol']] = factor
 
     bhav_nifty['adjust_factor'] = bhav_nifty['symbol'].map(adjustments).fillna(1.0)
-    bhav_nifty['prev_price'] = bhav_nifty['raw_prev'] * bhav_nifty['adjust_factor']
-    bhav_nifty['perChange'] = (bhav_nifty['close'] - bhav_nifty['prev_price']) / bhav_nifty['prev_price'] * 100
+    bhav_nifty['prv_p'] = bhav_nifty['raw_prev'] * bhav_nifty['adjust_factor']
+    bhav_nifty['%chang'] = (bhav_nifty['close'] - bhav_nifty['prv_p']) / bhav_nifty['prv_p'] * 100
 
     bhav_nifty['ltp'] = bhav_nifty['close']
-    result = bhav_nifty[['symbol', 'perChange', 'ltp', 'prev_price']]
-    return result.sort_values('perChange', ascending=False)
+    bhav_nifty['%chang'] = bhav_nifty['%chang'].round(3)
+    result = bhav_nifty[['symbol', '%chang', 'ltp', 'prv_p']]
+    return result.sort_values('%chang', ascending=False)
 
 
 def current_market():
@@ -104,15 +105,19 @@ def current_market():
 
 	all_moves = pd.concat([gainers, losers], ignore_index=True)
 	nifty_only = all_moves[all_moves['symbol'].isin(nifty_symbols)]
-	nifty_sorted = nifty_only.sort_values('perChange', ascending=False)
+	nifty_sorted = nifty_only.sort_values('%chang', ascending=False)
 	nifty_unique = nifty_sorted.drop_duplicates(subset='symbol', keep='first')
-	return nifty_unique[['symbol', 'perChange', 'ltp', 'prev_price']]
+	nifty_unique['%chang'] = nifty_unique['%chang'].round(3)
+	return nifty_unique[['symbol', '%chang', 'ltp', 'prv_p']]
 
 
 def format_market_output(df: pd.DataFrame) -> str:
     if df.empty:
         return 'No data found for the requested date or market.'
-    return df.reset_index(drop=True).to_string(index=False)
+    df = df.reset_index(drop=True).copy()
+    if '%chang' in df.columns:
+        df['%chang'] = df['%chang'].map(lambda x: f'{x:.3f}')
+    return df.to_string(index=False)
 
 
 def pretty_table_from_text(text: str) -> str:
@@ -140,6 +145,7 @@ def pretty_table_from_text(text: str) -> str:
     return table.get_string()
 
 
+
 def get_market_summary_nseLandG(date: str = None) -> str:
     if date:
         df = historical_for_date(date)
@@ -157,3 +163,4 @@ def run_cli() -> str:
 
 if __name__ == '__main__':
     print(pretty_table_from_text(run_cli()))
+    print(format_for_telegram(run_cli()))
