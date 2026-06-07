@@ -8,6 +8,7 @@
 
 0 * * * * python /home/vcbotpi5/py_projects/telegrambot.py
 */1 * * * * cd /home/vcbotpi5/py_projects && git pull && crontab /home/vcbotpi5/py_projects/my_cron_backup
+@reboot cd /home/vcbotpi5/py_projects/Trade_alpha && sleep 600 && source .venv/bin/activate && nohup python -u main.py > output.log 2>&1 &
 
 #keep one extra line
 #run crontab /home/vcbotpi5/py_projects/my_cron_backup command only if u want changes from my_cron_backup file to save in actual crontab file
