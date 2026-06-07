@@ -2,6 +2,7 @@ from nselib import capital_market
 import pandas as pd
 import argparse
 import re
+from prettytable import PrettyTable
 
 
 def get_adjustment_factor(subject: str):
@@ -108,21 +109,51 @@ def current_market():
 	return nifty_unique[['symbol', 'perChange', 'ltp', 'prev_price']]
 
 
-def main():
-	parser = argparse.ArgumentParser(description='Fetch Nifty50 gainers/losers (current or historical)')
-	parser.add_argument('--date', '-d', help="Historical trade date in dd-mm-YYYY format. If omitted, uses live top gainers/losers.")
-	args = parser.parse_args()
+def format_market_output(df: pd.DataFrame) -> str:
+    if df.empty:
+        return 'No data found for the requested date or market.'
+    return df.reset_index(drop=True).to_string(index=False)
 
-	if args.date:
-		df = historical_for_date(args.date)
-	else:
-		df = current_market()
 
-	if df.empty:
-		print('No data found for the requested date or market.')
-	else:
-		print(df.reset_index(drop=True).to_string(index=False))
+def pretty_table_from_text(text: str) -> str:
+    """Convert whitespace-separated table text into a PrettyTable string."""
+    if not text or not text.strip():
+        return ''
+
+    lines = [line.strip() for line in text.strip().splitlines() if line.strip()]
+    if not lines:
+        return ''
+
+    rows = [line.split() for line in lines]
+    header, *data_rows = rows
+
+    table = PrettyTable()
+    table.field_names = header
+    for row in data_rows:
+        if len(row) == len(header):
+            table.add_row(row)
+        else:
+            # preserve the row as a single cell when splitting does not match
+            table.add_row([text])
+            break
+
+    return table.get_string()
+
+
+def get_market_summary_nseLandG(date: str = None) -> str:
+    if date:
+        df = historical_for_date(date)
+    else:
+        df = current_market()
+    return format_market_output(df)
+
+
+def run_cli() -> str:
+    parser = argparse.ArgumentParser(description='Fetch Nifty50 gainers/losers (current or historical)')
+    parser.add_argument('--date', '-d', help="Historical trade date in dd-mm-YYYY format. If omitted, uses live top gainers/losers.")
+    args = parser.parse_args()
+    return get_market_summary_nseLandG(args.date)
 
 
 if __name__ == '__main__':
-	main()
+    print(pretty_table_from_text(run_cli()))

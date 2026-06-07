@@ -1,6 +1,8 @@
 from typing import Final
+from datetime import datetime
 from telegram import Update
 from telegram.ext import Application, MessageHandler, filters, ContextTypes, CommandHandler
+import nse_get_data
 
 TOKEN: Final = "8255069137:AAHPwP4dXQr3aOxAZiMKVWRhT0a4H_z_daM"
 CHAT_ID: Final = "-4874857541"
@@ -24,12 +26,22 @@ async def custom_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("This is a custom command response!")
 
 #Responses
+def is_date_string(text: str) -> bool:
+    try:
+        datetime.strptime(text.strip(), "%d-%m-%Y")
+        return True
+    except ValueError:
+        return False
+
+
 def handle_response(text: str) -> str:
     # Implement your logic to generate a response based on the input text
     if "status" in text.lower():
         return "The current status is: All systems operational."
     elif "temperature" in text.lower():
         return "The current temperature is 25°C."
+    elif is_date_string(text):
+        return nse_get_data.pretty_table_from_text(nse_get_data.get_market_summary_nseLandG(text))
     else:
         return "Sorry, I didn't understand that. Please try again."
 
@@ -47,7 +59,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         response = handle_response(text)
     
-    print(f"Bot: {response}")
+    # print(f"Bot: {response}") #Uncomment for debugging
     await update.message.reply_text(response)
 
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -69,33 +81,4 @@ if __name__ == "__main__":
     app.add_error_handler(error)
 
     print("Bot is polling...")
-    app.run_polling(poll_interval=3)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-from telegram import Update
-from telegram.ext import Application, MessageHandler, filters, ContextTypes
-
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # Extract the message text
-    text = update.message.text
-    print(f"Received message: {text}")
-
-if __name__ == "__main__":
-    app = Application.builder().token("8255069137:AAHPwP4dXQr3aOxAZiMKVWRhT0a4H_z_daM").build()
-    # Add a handler for all text messages
-    app.add_handler(MessageHandler(filters.TEXT, handle_message))
-
-    print("Bot is polling...")
-    app.run_polling()
+    app.run_polling(poll_interval=1)
