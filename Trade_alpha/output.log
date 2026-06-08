@@ -2,3 +2,33 @@ nohup: ignoring input
 Starting the bot...
 Bot is polling...
 User (None) sent a message in group chat: @vcautomationbot 25-32-2025
+User (None) sent a message in group chat: Hi
+User (None) sent a message in group chat: @hi
+User (None) sent a message in group chat: @vcautomationbot hi
+User (None) sent a message in group chat: @vcautomationbot hi
+User (None) sent a message in group chat: @vcautomationbot 12-4-2025
+User (None) sent a message in group chat: @vcautomationbot 13-4-2025
+User (None) sent a message in group chat: @vcautomationbot 13-4-2025
+User (None) sent a message in group chat: @vcautomationbot 14-4-2025
+User (None) sent a message in group chat: @vcautomationbot 15-4-2025
+User (None) sent a message in group chat: @vcautomationbot 20-7-2024
+User (None) sent a message in group chat: @vcautomationbot 21-7-2024
+User (None) sent a message in group chat: @vcautomationbot 21-7-2024
+User (None) sent a message in group chat: @vcautomationbot 22-7-2024
+User (None) sent a message in group chat: @vcautomationbot hi
+User (None) sent a message in group chat: @vcautomationbot 11-12-2025
+User (None) sent a message in group chat: @vcautomationbot 12-12-2025
+User (None) sent a message in group chat: @vcautomationbot 13-12-2025
+User (None) sent a message in group chat: @vcautomationbot 15-12-2025
+User (None) sent a message in group chat: @vcautomationbot 04-05-2026
+User (None) sent a message in group chat: @vcautomationbot 8-6-2025
+User (None) sent a message in group chat: 8-6-2025
+User (None) sent a message in group chat: @vcautomationbot 08-06-2026
+User (None) sent a message in group chat: @vcautomationbot 08-06-2026
+User (None) sent a message in group chat: @vcautomationbot 05-03-2026
+User (None) sent a message in group chat: @vcautomationbot 23-02-2025
+User (None) sent a message in group chat: @vcautomationbot 21-02-2025
+User (None) sent a message in group chat: @vcautomationbot 08-06-2026
+User (None) sent a message in group chat: @vcautomationbot 06-06-2026
+User (None) sent a message in group chat: @vcautomationbot 05-06-2026
+Update None caused an error: httpx.ReadError: 

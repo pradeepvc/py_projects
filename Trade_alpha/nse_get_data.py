@@ -97,18 +97,21 @@ def historical_for_date(trade_date: str):
 
 
 def current_market():
-	nifty50 = capital_market.nifty50_equity_list()
-	nifty_symbols = set(nifty50['Symbol'].tolist())
+    nifty50 = capital_market.nifty50_equity_list()
+    nifty_symbols = set(nifty50['Symbol'].tolist())
 
-	gainers = capital_market.top_gainers_or_losers(to_get='gainers')
-	losers = capital_market.top_gainers_or_losers(to_get='loosers')
+    gainers = capital_market.top_gainers_or_losers(to_get='gainers')
+    losers = capital_market.top_gainers_or_losers(to_get='loosers')
 
-	all_moves = pd.concat([gainers, losers], ignore_index=True)
-	nifty_only = all_moves[all_moves['symbol'].isin(nifty_symbols)]
-	nifty_sorted = nifty_only.sort_values('%chang', ascending=False)
-	nifty_unique = nifty_sorted.drop_duplicates(subset='symbol', keep='first')
-	nifty_unique['%chang'] = nifty_unique['%chang'].round(3)
-	return nifty_unique[['symbol', '%chang', 'ltp', 'prv_p']]
+    all_moves = pd.concat([gainers, losers], ignore_index=True)
+    nifty_only = all_moves[all_moves['symbol'].isin(nifty_symbols)]
+    nifty_sorted = nifty_only.sort_values('perChange', ascending=False)
+    nifty_unique = nifty_sorted.drop_duplicates(subset='symbol', keep='first')
+
+    # nselib returns live market changes in `perChange`, not `%chang`
+    nifty_unique['%chang'] = nifty_unique['perChange'].round(3)
+    nifty_unique['prv_p'] = nifty_unique['prev_price']
+    return nifty_unique[['symbol', '%chang', 'ltp', 'prv_p']]
 
 
 def format_market_output(df: pd.DataFrame) -> str:
@@ -146,9 +149,20 @@ def pretty_table_from_text(text: str) -> str:
 
 
 
+def is_today_date(date_str: str) -> bool:
+    try:
+        requested_date = pd.to_datetime(date_str, format='%d-%m-%Y', errors='raise').date()
+    except Exception:
+        raise ValueError(f"Invalid date format: {date_str}. Expected dd-mm-YYYY")
+    return requested_date == pd.Timestamp.now().date()
+
+
 def get_market_summary_nseLandG(date: str = None) -> str:
     if date:
-        df = historical_for_date(date)
+        if is_today_date(date):
+            df = current_market()
+        else:
+            df = historical_for_date(date)
     else:
         df = current_market()
     return format_market_output(df)
@@ -163,4 +177,3 @@ def run_cli() -> str:
 
 if __name__ == '__main__':
     print(pretty_table_from_text(run_cli()))
-    print(format_for_telegram(run_cli()))
